@@ -1,39 +1,39 @@
 const db = require("../config/dbConfig");
 
-class Users {
-  static async all() {
-    const data = await db.query("SELECT * FROM users;");
+const Orders = {
+  all: async () => {
+    const data = await db.query("SELECT * FROM orders;");
     return data.rows;
-  }
+  },
 
-  static async findOne(id) {
-    const data = await db.query("SELECT * FROM users WHERE id=$1;", [id]);
+  findOne: async (id) => {
+    const data = await db.query("SELECT * FROM orders WHERE id=$1;", [id]);
     return data.rows;
-  }
+  },
 
-  static async createOne({ firstname, lastname, email, password, admin }) {
+  createOne: async ({ userid }) => {
     const data = await db.query(
-      "INSERT INTO users (firstname, lastname, email, password, admin) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
-      [firstname, lastname, email, password, admin]
+      "INSERT INTO orders (userid) VALUES ($1) RETURNING *;",
+      [userid]
     );
     return data.rows;
-  }
+  },
 
-  static async updateOne({ id, firstname, lastname, email, password, admin }) {
+  updateOne: async ({ id, userid }) => {
     const data = await db.query(
-      "UPDATE users SET firstname=$1, lastname=$2, email=$3, password=$4, admin=$5 WHERE id=$6 RETURNING *;",
-      [firstname, lastname, email, password, admin, id]
+      "UPDATE orders SET userid=$1 WHERE id=$2 RETURNING *;",
+      [userid, id]
     );
     return data.rows;
-  }
+  },
 
-  static async deleteOne(id) {
-    const data = await db.query("DELETE FROM users WHERE id=$1;", [id]);
+  deleteOne: async (id) => {
+    const data = await db.query("DELETE FROM orders WHERE id=$1;", [id]);
     return data.rows;
-  }
-}
+  },
+};
 
-module.exports = Users;
+module.exports = Orders;
 
 // (async () => {
 //   console.log(await Users.all());
