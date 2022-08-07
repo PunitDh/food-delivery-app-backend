@@ -33,6 +33,8 @@ class Users {
   }
 }
 
+module.exports = Users;
+
 // (async () => {
 //   console.log(await Users.all());
 // })();
@@ -56,6 +58,20 @@ class Users {
 //     })
 //   );
 // })();
+
+//   (async () => {
+//     console.log(
+//       await Users.updateOne({
+//         id: 3,
+//         firstname: "Punit",
+//         lastname: "Jackson",
+//         email: "me@me.com",
+//         password: "Chinki",
+//         admin: true,
+//       })
+//     );
+//   }
+// )();
 
 (async () => {
   console.log(
