@@ -11,6 +11,11 @@ class Users {
     return data.rows;
   }
 
+  static async findByEmail(email) {
+    const data = await db.query("SELECT * FROM users WHERE email=$1;", [email]);
+    return data.rows;
+  }
+
   static async createOne({ firstname, lastname, email, password, admin }) {
     const data = await db.query(
       "INSERT INTO users (firstname, lastname, email, password, admin) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
@@ -73,15 +78,15 @@ module.exports = Users;
 //   }
 // )();
 
-(async () => {
-  console.log(
-    await Users.updateOne({
-      id: 3,
-      firstname: "Punit",
-      lastname: "Jackson",
-      email: "me@me.com",
-      password: "Chinki",
-      admin: true,
-    })
-  );
-})();
+// (async () => {
+//   console.log(
+//     await Users.updateOne({
+//       id: 3,
+//       firstname: "Punit",
+//       lastname: "Jackson",
+//       email: "me@me.com",
+//       password: "Chinki",
+//       admin: true,
+//     })
+//   );
+// })();
