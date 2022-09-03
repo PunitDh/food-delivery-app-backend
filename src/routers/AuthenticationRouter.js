@@ -2,7 +2,7 @@ const router = require("express").Router();
 
 const Users = require("../controllers/UsersController");
 
-const AuthHelper = require("../helpers/authentication");
+const AuthHelper = require("../helpers/AuthHelper");
 
 router.post("/register", async (req, res) => {
   const registration = req.body;
@@ -42,8 +42,6 @@ router.post("/register", async (req, res) => {
     admin: false,
   });
 
-  console.log(newUser);
-
   const jwt = AuthHelper.createJWT(newUser[0]);
   res.status(201).send(jwt);
 
@@ -54,6 +52,26 @@ router.post("/register", async (req, res) => {
   }
 });
 
-router.post("/login", async (req, res) => {});
+router.post("/login", async (req, res) => {
+  const login = req.body;
+  const user = await Users.findByEmail(login.email);
+  console.log(user);
+
+  if (user.length === 0) {
+    res.status(404).json({
+      message: "Email does not exist",
+    });
+    return;
+  }
+  if (!(await AuthHelper.comparePassword(login.password, user[0].password))) {
+    res.status(401).json({
+      message: "Password does not match",
+    });
+    return;
+  }
+
+  const jwt = AuthHelper.createJWT(user[0]);
+  res.status(200).send(jwt);
+});
 
 module.exports = router;

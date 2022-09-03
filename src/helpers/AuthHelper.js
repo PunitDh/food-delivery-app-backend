@@ -6,7 +6,9 @@ const AuthHelper = {
     const salt = await bcrypt.genSalt(Number(process.env.SALT_ROUNDS));
     return await bcrypt.hash(password, salt);
   },
-  comparePassword: async () => {},
+  comparePassword: async (loginPassword, hashedPassword) => {
+    return await bcrypt.compare(loginPassword, hashedPassword);
+  },
 
   createJWT: (user) => {
     const { password, ...currentUser } = user;
