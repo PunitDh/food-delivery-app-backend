@@ -3,7 +3,12 @@ const db = require("../config/dbConfig");
 class Users {
   static async all() {
     const data = await db.query("SELECT * FROM users;");
-    return data.rows;
+    const users = data.rows.map((item) => {
+      const { password, admin, ...user } = item;
+
+      return user;
+    });
+    return users;
   }
 
   static async findOne(id) {
