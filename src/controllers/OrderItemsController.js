@@ -8,7 +8,7 @@ const OrderItems = {
 
   findOne: async (id) => {
     const data = await db.query("SELECT * FROM orderitems WHERE id=$1;", [id]);
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
   createOne: async ({ orderid, itemid, quantity }) => {
@@ -16,7 +16,7 @@ const OrderItems = {
       "INSERT INTO orderitems (orderid, itemid, quantity) VALUES ($1, $2, $3) RETURNING *;",
       [orderid, itemid, quantity]
     );
-    return data.rows;
+    return data.rows[0];
   },
 
   updateOne: async ({ id, orderid, itemid, quantity }) => {
@@ -24,12 +24,19 @@ const OrderItems = {
       "UPDATE orderitems SET orderid=$1, itemid=$2, quantity=$3 WHERE id=$4 RETURNING *;",
       [orderid, itemid, quantity, id]
     );
-    return data.rows;
+    return data.rows[0];
   },
 
   deleteOne: async (id) => {
-    const data = await db.query("DELETE FROM orderitems WHERE id=$1;", [id]);
-    return data.rows;
+    const data = await db.query(
+      "DELETE FROM orderitems WHERE id=$1 RETURNING *;",
+      [id]
+    );
+    try {
+      return data.rows[0];
+    } catch (error) {
+      return null;
+    }
   },
 };
 

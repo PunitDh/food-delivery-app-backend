@@ -8,7 +8,7 @@ const CartItems = {
 
   findOne: async (id) => {
     const data = await db.query("SELECT * FROM cartitems WHERE id=$1;", [id]);
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
   createOne: async ({ cartid, itemid, quantity }) => {
@@ -16,7 +16,7 @@ const CartItems = {
       "INSERT INTO cartitems (cartid, itemid, quantity) VALUES ($1, $2, $3) RETURNING *;",
       [cartid, itemid, quantity]
     );
-    return data.rows;
+    return data.rows[0];
   },
 
   updateOne: async ({ id, cartid, itemid, quantity }) => {
@@ -24,12 +24,20 @@ const CartItems = {
       "UPDATE cartitems SET cartid=$1, itemid=$2, quantity=$3 WHERE id=$4 RETURNING *;",
       [cartid, itemid, quantity, id]
     );
-    return data.rows;
+    return data.rows[0];
   },
 
   deleteOne: async (id) => {
-    const data = await db.query("DELETE FROM cartitems WHERE id=$1;", [id]);
-    return data.rows;
+    const data = await db.query(
+      "DELETE FROM cartitems WHERE id=$1 RETURNING *;",
+      [id]
+    );
+
+    try {
+      return data.rows[0];
+    } catch (error) {
+      return null;
+    }
   },
 };
 
