@@ -67,14 +67,14 @@ router.post("/login", async (req, res) => {
     });
     return;
   }
-  if (!(await AuthHelper.comparePassword(login.password, user[0].password))) {
+  if (!(await AuthHelper.comparePassword(login.password, user.password))) {
     res.status(401).json({
       message: "Password does not match",
     });
     return;
   }
 
-  const jwt = AuthHelper.createJWT(user[0]);
+  const jwt = AuthHelper.createJWT(user);
   res.status(200).send(jwt);
 });
 

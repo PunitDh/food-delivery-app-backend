@@ -8,15 +8,15 @@ const Items = {
 
   findOne: async (id) => {
     const data = await db.query("SELECT * FROM items WHERE id=$1;", [id]);
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
-  createOne: async ({ name, description, price, image }) => {
+  createOne: async ({ name, description, price, image, rating }) => {
     const data = await db.query(
-      "INSERT INTO items (name, description, price, image) VALUES ($1, $2, $3, $4) RETURNING *;",
-      [name, description, price, image]
+      "INSERT INTO items (name, description, price, image, rating) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+      [name, description, price, image, rating]
     );
-    return data.rows;
+    return data.rows[0];
   },
 
   updateOne: async ({ id, name, description, price, image }) => {
@@ -24,12 +24,14 @@ const Items = {
       "UPDATE items SET name=$1, description=$2, price=$3, image=$4 WHERE id=$5 RETURNING *;",
       [name, description, price, image, id]
     );
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
   deleteOne: async (id) => {
-    const data = await db.query("DELETE FROM items WHERE id=$1;", [id]);
-    return data.rows;
+    const data = await db.query("DELETE FROM items WHERE id=$1 RETURNING *;", [
+      id,
+    ]);
+    return data.rows[0];
   },
 };
 
