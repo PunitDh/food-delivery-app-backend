@@ -11,9 +11,7 @@ const AuthHelper = {
   },
 
   createJWT: (user) => {
-    const { password, ...currentUser } = user;
-    console.log(currentUser);
-    return JWT.sign(currentUser, process.env.JWT_SECRET_KEY, {
+    return JWT.sign(user, process.env.JWT_SECRET_KEY, {
       expiresIn: "1h",
       algorithm: "HS256",
     });

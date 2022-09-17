@@ -13,12 +13,12 @@ class Users {
 
   static async findOne(id) {
     const data = await db.query("SELECT * FROM users WHERE id=$1;", [id]);
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   }
 
   static async findByEmail(email) {
     const data = await db.query("SELECT * FROM users WHERE email=$1;", [email]);
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   }
 
   static async createOne({ firstname, lastname, email, password, admin }) {
@@ -26,7 +26,7 @@ class Users {
       "INSERT INTO users (firstname, lastname, email, password, admin) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
       [firstname, lastname, email, password, admin]
     );
-    return data.rows;
+    return data.rows[0];
   }
 
   static async updateOne({ id, firstname, lastname, email, password, admin }) {
@@ -34,12 +34,16 @@ class Users {
       "UPDATE users SET firstname=$1, lastname=$2, email=$3, password=$4, admin=$5 WHERE id=$6 RETURNING *;",
       [firstname, lastname, email, password, admin, id]
     );
-    return data.rows;
+    return data.rows.length > 0 ? data.rows[0] : null;
   }
 
   static async deleteOne(id) {
-    const data = await db.query("DELETE FROM users WHERE id=$1;", [id]);
-    return data.rows;
+    const data = await db.query("DELETE FROM users WHERE id=$1 RETURNING *;", [
+      id,
+    ]);
+    const { password, ...deletedUser } = data.rows[0];
+
+    return deletedUser;
   }
 }
 
