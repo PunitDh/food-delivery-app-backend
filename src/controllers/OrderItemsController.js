@@ -24,7 +24,7 @@ const OrderItems = {
       "UPDATE orderitems SET orderid=$1, itemid=$2, quantity=$3 WHERE id=$4 RETURNING *;",
       [orderid, itemid, quantity, id]
     );
-    return data.rows[0];
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
   deleteOne: async (id) => {
@@ -32,11 +32,7 @@ const OrderItems = {
       "DELETE FROM orderitems WHERE id=$1 RETURNING *;",
       [id]
     );
-    try {
-      return data.rows[0];
-    } catch (error) {
-      return null;
-    }
+    return data.rows[0];
   },
 };
 

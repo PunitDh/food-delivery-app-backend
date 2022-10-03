@@ -24,18 +24,14 @@ const Orders = {
       "UPDATE orders SET userid=$1 WHERE id=$2 RETURNING *;",
       [userid, id]
     );
-    return data.rows[0];
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
   deleteOne: async (id) => {
     const data = await db.query("DELETE FROM orders WHERE id=$1 RETURNING *;", [
       id,
     ]);
-    try {
-      return data.rows[0];
-    } catch (error) {
-      return null;
-    }
+    return data.rows[0];
   },
 };
 

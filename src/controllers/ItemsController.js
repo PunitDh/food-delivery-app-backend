@@ -11,31 +11,27 @@ const Items = {
     return data.rows.length > 0 ? data.rows[0] : null;
   },
 
-  createOne: async ({ name, description, price, image }) => {
+  createOne: async ({ name, category, price, image, rating }) => {
     const data = await db.query(
-      "INSERT INTO items (name, description, price, image) VALUES ($1, $2, $3, $4) RETURNING *;",
-      [name, description, price, image]
+      "INSERT INTO items (name, category, price, image, rating) VALUES ($1, $2, $3, $4, $5) RETURNING *;",
+      [name, category, price, image, rating]
     );
     return data.rows[0];
   },
 
-  updateOne: async ({ id, name, description, price, image }) => {
+  updateOne: async ({ id, name, category, price, image, rating }) => {
     const data = await db.query(
-      "UPDATE items SET name=$1, description=$2, price=$3, image=$4 WHERE id=$5 RETURNING *;",
-      [name, description, price, image, id]
+      "UPDATE items SET name=$1, category=$2, price=$3, image=$4, rating=$5 WHERE id=$6 RETURNING *;",
+      [name, category, price, image, rating, id]
     );
-    return data.rows[0];
+    return data.rows.length > 0 ? data.rows[0] : null;
   },
 
   deleteOne: async (id) => {
     const data = await db.query("DELETE FROM items WHERE id=$1 RETURNING *;", [
       id,
     ]);
-    try {
-      return data.rows[0];
-    } catch (error) {
-      return null;
-    }
+    return data.rows[0];
   },
 };
 

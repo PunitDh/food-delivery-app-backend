@@ -4,6 +4,8 @@ const Users = require("../controllers/UsersController");
 
 const AuthHelper = require("../helpers/AuthHelper");
 
+const Carts = require("../controllers/CartsController");
+
 router.post("/register", async (req, res) => {
   const registration = req.body;
 
@@ -41,7 +43,9 @@ router.post("/register", async (req, res) => {
     admin: false,
   });
 
-  const jwt = AuthHelper.createJWT(newUser);
+  const cart = await Carts.createOne({ userid: newUser.id });
+
+  const jwt = AuthHelper.createJWT({ cartId: cart.id, ...newUser });
   res.status(201).send(jwt);
 
   function sendBadRequest(message) {

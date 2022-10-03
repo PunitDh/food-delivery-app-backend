@@ -1,13 +1,20 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const fileUpload = require("express-fileupload");
 const cors = require("cors");
 const port = process.env.PORT || 5000;
 const AuthenticationRouter = require("./src/routers/AuthenticationRouter.js");
+const AdminRouter = require("./src/routers/AdminRouter");
+const ItemsRouter = require("./src/routers/ItemsRouter");
+
 app.use(cors());
 app.use(express.json());
+app.use(fileUpload());
 
 app.use("/auth", AuthenticationRouter);
+app.use("/admin", AdminRouter);
+app.use("/items", ItemsRouter);
 
 //Endpoints
 app.get("/", (req, res) => {

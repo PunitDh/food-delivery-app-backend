@@ -3,7 +3,12 @@ const db = require("../config/dbConfig");
 class Users {
   static async all() {
     const data = await db.query("SELECT * FROM users;");
-    return data.rows;
+    const users = data.rows.map((item) => {
+      const { password, admin, ...user } = item;
+
+      return user;
+    });
+    return users;
   }
 
   static async findOne(id) {
@@ -29,19 +34,16 @@ class Users {
       "UPDATE users SET firstname=$1, lastname=$2, email=$3, password=$4, admin=$5 WHERE id=$6 RETURNING *;",
       [firstname, lastname, email, password, admin, id]
     );
-    return data.rows[0];
+    return data.rows.length > 0 ? data.rows[0] : null;
   }
 
   static async deleteOne(id) {
     const data = await db.query("DELETE FROM users WHERE id=$1 RETURNING *;", [
       id,
     ]);
-    try {
-      const { password, ...deletedUser } = data.rows[0];
-      return deletedUser;
-    } catch (error) {
-      return null;
-    }
+    const { password, ...deletedUser } = data.rows[0];
+
+    return deletedUser;
   }
 }
 
