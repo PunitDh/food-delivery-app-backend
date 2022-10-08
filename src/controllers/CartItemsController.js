@@ -26,6 +26,14 @@ const CartItems = {
     return data.rows;
   },
 
+  findAndUpdateQuantity: async ({ cartid, itemid, quantityToUpdate }) => {
+    const data = await db.query(
+      "UPDATE cartitems SET quantity=quantity+$3 WHERE cartid=$1 AND itemid=$2 RETURNING *;",
+      [cartid, itemid, quantityToUpdate]
+    );
+    return data.rows.length > 0 ? data.rows[0] : null;
+  },
+
   createOne: async ({ cartid, itemid, quantity }) => {
     const data = await db.query(
       "INSERT INTO cartitems (cartid, itemid, quantity) VALUES ($1, $2, $3) RETURNING *;",
