@@ -73,7 +73,9 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  const jwt = AuthHelper.createJWT(user);
+  const cart = await Carts.findByUserId(user.id);
+
+  const jwt = AuthHelper.createJWT({ cartId: cart.id, ...user });
   res.status(200).send(jwt);
 });
 

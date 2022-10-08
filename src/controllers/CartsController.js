@@ -11,6 +11,13 @@ const Carts = {
     return data.rows.length > 0 ? data.rows[0] : null;
   },
 
+  findByUserId: async (userid) => {
+    const data = await db.query("SELECT * FROM carts WHERE userid=$1;", [
+      userid,
+    ]);
+    return data.rows[0];
+  },
+
   createOne: async ({ userid }) => {
     const data = await db.query(
       "INSERT INTO carts (userid) VALUES ($1) RETURNING *;",
