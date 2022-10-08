@@ -10,10 +10,9 @@ router.post("/register", async (req, res) => {
   const registration = req.body;
 
   //   Check if the email exists in the database
+  const userExists = await Users.findByEmail(registration.email);
 
-  const users = await Users.findByEmail(registration.email);
-
-  if (users.length > 0) {
+  if (userExists) {
     sendBadRequest("Email already exists");
     return;
   }
@@ -61,7 +60,7 @@ router.post("/login", async (req, res) => {
   const user = await Users.findByEmail(login.email);
   console.log(user);
 
-  if (user.length === 0) {
+  if (!user) {
     res.status(404).json({
       message: "Email does not exist",
     });
@@ -74,8 +73,16 @@ router.post("/login", async (req, res) => {
     return;
   }
 
-  const jwt = AuthHelper.createJWT(user);
+  const cart = await Carts.findByUserId(user.id);
+
+  const jwt = AuthHelper.createJWT({ cartId: cart.id, ...user });
   res.status(200).send(jwt);
+});
+
+router.delete("/:id", async (req, res) => {
+  const deletedUser = await Users.deleteOne(req.params.id);
+
+  res.send(deletedUser);
 });
 
 module.exports = router;

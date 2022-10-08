@@ -11,6 +11,21 @@ const CartItems = {
     return data.rows.length > 0 ? data.rows[0] : null;
   },
 
+  findItemsByCartId: async (cartid) => {
+    const data = await db.query("SELECT * FROM cartitems WHERE cartid=$1;", [
+      cartid,
+    ]);
+    return data.rows;
+  },
+
+  findItemInCart: async ({ cartid, itemid }) => {
+    const data = await db.query(
+      "SELECT * FROM cartitems WHERE cartid=$1 AND itemid=$2;",
+      [cartid, itemid]
+    );
+    return data.rows;
+  },
+
   createOne: async ({ cartid, itemid, quantity }) => {
     const data = await db.query(
       "INSERT INTO cartitems (cartid, itemid, quantity) VALUES ($1, $2, $3) RETURNING *;",
